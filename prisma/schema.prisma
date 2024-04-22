@@ -17,10 +17,11 @@ model User {
   email    String   @unique
   name     String?
   password String   @default("0000000")
-   student   Student? // Define a one-to-one relation to Student
-
-  
+  student   Student? // Define a one-to-one relation to Student
+  teacher Teacher?   // Define a one-to-many relation to Teacher
 }
+
+//Student model
 model Student {
   id         Int     @id @default(autoincrement())
   user       User    @relation(fields: [userId], references: [id])
@@ -28,3 +29,10 @@ model Student {
   matricule Int      @unique
 }
 
+// Teacher model
+model Teacher {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int      @unique   // Foreign key referencing User.id
+  subject  String
+}

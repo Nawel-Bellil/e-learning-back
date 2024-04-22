@@ -1,0 +1,32 @@
+#postman : 
+- fake client  for testing purpose
+- send request to server and get response
+- allow  you to test your API from the comfort of your own IDE.
+- being able to make all http requests (GET, POST, PUT, PATCH, DELETE)
+
+#API:
+- app programming interface
+- allows apps to communicate  with each other
+- defined by a protocol such as REST or GraphQL
+- take http request, process the data with a business logic,  then return an HTTP response
+- SOAP(built with xml only, high security), RestAPI (lightweight architecture, better performance, easy integration)
+
+#HTTP Methods:
+- GET: retrieve information from the server(fetch it)
+- POST: submit data to be processed to the server
+- PUT: update existing information on the server
+- DELETE: delete existing information from the server
+- PATCH: partial update of resource
+
+#Request:
+- consist of method , URL , headers and body part
+- sent from the client to the server
+
+#Response:
+- consists of status code, header and body parts
+- sent from the server back to the client
+
+#Workflow in Postman:
+1. Set up a new request: specify the method, url, add any necessary headers and parameters.
+2. Send the request: click the "send" button to initiate the request.
+3. View the results: The response will display below the request. You can view raw, formatted or previewed content depending on what type of data
