@@ -1,32 +1,33 @@
-// This is your Prisma schema file,
+// prisma schema file
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Generator configuration to generate the Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
-
+// DataSource configuration for connecting to the PostgreSQL database
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 
-
+// User model representing users in the application(inheritance)
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
+  id       Int      @id @default(autoincrement()) // Unique identifier for the user
+  email    String   @unique // Unique email address of the user
   name     String?
   password String   @default("0000000")
   student   Student? // Define a one-to-one relation to Student
-  teacher Teacher?   // Define a one-to-many relation to Teacher
+  teacher Teacher?   // Optional relation to Teacher model
 }
 
 //Student model
 model Student {
   id         Int     @id @default(autoincrement())
   user       User    @relation(fields: [userId], references: [id])
-  userId     Int  @unique   // This field will hold the foreign key to the User table
-  matricule Int      @unique
+  userId     Int     @unique   // This field will hold the foreign key to the User table
+  matricule  Int     @unique   //Unique identifier for the student
 }
 
 // Teacher model
@@ -34,5 +35,24 @@ model Teacher {
   id       Int      @id @default(autoincrement())
   user     User     @relation(fields: [userId], references: [id])
   userId   Int      @unique   // Foreign key referencing User.id
-  subject  String
+  module Module[]  @relation("TeacherToModule")// Many-to-many relationship with Module model
+  chapter Chapter[] @relation("TeacherToChapter")  // Many-to-Many relationship with Chapter model via intermediate join table "TeacherToChapter"
 }
+// Module model representing modules in the course
+model Module {
+  id            Int       @id @default(autoincrement()) // Unique identifier for the module
+  teacher       Teacher   @relation("TeacherToModule",fields: [teacherId], references: [id]) // Reference to the associated Teacher
+  teacherId     Int       // Foreign key to the Teacher table
+  chapters      Chapter[] // One-to-many relationship with Chapter model
+ 
+}
+// Chapter model representing chapters in the course
+model Chapter {
+  chapter_id    Int      @id @default(autoincrement()) // Unique identifier for the chapter
+  chapter_name  String // Name of the chapter
+  teacher       Teacher  @relation("TeacherToChapter",fields: [teacherId], references: [id]) // Reference to the associated Teacher
+  teacherId Int         //Foreign key linking to the Teacher model
+  module        Module   @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
+  moduleId Int           //Foreign key linking to the Module model
+}
+

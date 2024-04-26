@@ -7,5 +7,11 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5"
+  },
+  "scripts": {
+    "devStart": "nodemon app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
