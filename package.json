@@ -12,6 +12,7 @@
     "devStart": "nodemon app.js"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "prisma": "^5.13.0"
   }
 }
