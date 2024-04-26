@@ -14,45 +14,84 @@ datasource db {
 
 // User model representing users in the application(inheritance)
 model User {
-  id       Int      @id @default(autoincrement()) // Unique identifier for the user
-  email    String   @unique // Unique email address of the user
-  name     String?
-  password String   @default("0000000")
-  student   Student? // Define a one-to-one relation to Student
-  teacher Teacher?   // Optional relation to Teacher model
+  id         Int      @id @default(autoincrement()) // Unique identifier for the user
+  email      String   @unique // Unique email address of the user
+  name       String?
+  password   String   @default("0000000")
+  student    Student? // Define a one-to-one relation to Student
+  teacher    Teacher? // Define a one-to-one relation to Teacher
 }
 
 //Student model
 model Student {
-  id         Int     @id @default(autoincrement())
-  user       User    @relation(fields: [userId], references: [id])
-  userId     Int     @unique   // This field will hold the foreign key to the User table
-  matricule  Int     @unique   //Unique identifier for the student
+  id          Int     @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int     @unique // This field will hold the foreign key to the User table
+  matricule   Int     @unique //Unique identifier for the student
+  activity    Int     //how much he's active in the platform
+  evaluation  Int     //Quizz evaluation
 }
 
 // Teacher model
 model Teacher {
-  id       Int      @id @default(autoincrement())
-  user     User     @relation(fields: [userId], references: [id])
-  userId   Int      @unique   // Foreign key referencing User.id
-  module Module[]  @relation("TeacherToModule")// Many-to-many relationship with Module model
-  chapter Chapter[] @relation("TeacherToChapter")  // Many-to-Many relationship with Chapter model via intermediate join table "TeacherToChapter"
-}
-// Module model representing modules in the course
-model Module {
-  id            Int       @id @default(autoincrement()) // Unique identifier for the module
-  teacher       Teacher   @relation("TeacherToModule",fields: [teacherId], references: [id]) // Reference to the associated Teacher
-  teacherId     Int       // Foreign key to the Teacher table
-  chapters      Chapter[] // One-to-many relationship with Chapter model
- 
-}
-// Chapter model representing chapters in the course
-model Chapter {
-  chapter_id    Int      @id @default(autoincrement()) // Unique identifier for the chapter
-  chapter_name  String // Name of the chapter
-  teacher       Teacher  @relation("TeacherToChapter",fields: [teacherId], references: [id]) // Reference to the associated Teacher
-  teacherId Int         //Foreign key linking to the Teacher model
-  module        Module   @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
-  moduleId Int           //Foreign key linking to the Module model
+  id           Int       @id @default(autoincrement())
+  user         User      @relation(fields: [userId], references: [id])
+  userId       Int       @unique   // Foreign key referencing User.id
+  module       Module[]  @relation("TeacherToModule")// Many-to-many relationship with Module model
+  chapter      Chapter[] @relation("TeacherToChapter")  // Many-to-Many relationship with Chapter model via intermediate join table "TeacherToChapter"
+  quizzes      Quizz[]   @relation("TeacherToModule")
 }
 
+// Module model representing modules in the course
+model Module {
+  id           Int       @id @default(autoincrement()) // Unique identifier for the module
+  // Reference to the associated Teacher
+  teacher      Teacher   @relation("TeacherToModule",fields: [teacherId], references: [id]) 
+  teacherId    Int       // Foreign key to the Teacher table
+  chapters     Chapter[] // One-to-many relationship with Chapter model
+}
+
+// Chapter model representing chapters in the Module
+model Chapter {
+  chapter_id    Int      @id @default(autoincrement()) // Unique identifier for the chapter
+  chapter_name  String   // Name of the chapter
+  teacher       Teacher  @relation("TeacherToChapter",fields: [teacherId], references: [id]) // Reference to the associated Teacher
+  teacherId     Int      //Foreign key linking to the Teacher model
+  module        Module   @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
+  moduleId      Int      //Foreign key linking to the Module model
+  quizzes       Quizz[] 
+}
+model Quizz{
+  quizz_id      Int @id @default(autoincrement())
+  teacher       Teacher   @relation("TeacherToModule",fields: [teacherId], references: [id]) // Reference to the associated Teacher
+  teacherId     Int       // Foreign key to the Teacher table
+  chapter       Chapter   @relation(fields: [chapterId], references: [chapter_id]) // Reference to the associated Chapter
+  chapterId  Int  
+  questions     Question[]
+}
+
+model Question {
+  question_id   Int     @id @default(autoincrement()) // Unique identifier for the question
+  type          TypeQuestionEnum // The type of the question (MCQ, True/False)
+  content       String  // The actual content of the question
+  answers       Answer[]
+  quizz         Quizz     @relation(fields: [quizzId], references: [quizz_id]) // Reference to the associated Quizz
+  quizzId       Int       // Foreign key linking to the Quizz model
+ 
+
+}
+
+
+enum TypeQuestionEnum {
+  MCQ 
+  TF
+}
+
+model Answer {
+  answer_id Int @id @default(autoincrement()) //Unique identifier for an answer
+  content   String //Content of the answer
+  isCorrect     Boolean   // If true, this answer is considered as correct. If false, it's not.
+  question      Question  @relation(fields: [questionId], references: [question_id]) // Reference to the associated Question
+  questionId    Int       // Foreign key linking to the Question model
+
+}
