@@ -83,8 +83,8 @@ model Question {
 
 
 enum TypeQuestionEnum {
-  MCQ 
-  TF
+  MCQ //QCM
+  TF  //true/flase
 }
 
 model Answer {
