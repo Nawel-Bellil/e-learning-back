@@ -6,8 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // Get All Users
-async function createUser(req, res) {
-  const { email, password, name } = req.body;
+async function createStudent(req, res) {
+  const { email, password, name, matricule } = req.body;
 
   try {
     // Check if user already exists
@@ -32,17 +32,24 @@ async function createUser(req, res) {
       },
     });
 
+    const student = await prisma.student.create({
+      data: {
+        user: { connect: { id: user.id } },
+        matricule,
+      },
+    });
+
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
-    res.status(201).json({ token });
+    res.status(201).json({ token, student });
   } catch (error) {
     console.error("Error during user registration:", error);
     res.status(500).json({ message: "Server error" });
   }
 }
 
-async function loginUser(req, res) {
+async function loginStudent(req, res) {
   const { email, password } = req.body;
 
   try {
@@ -64,79 +71,67 @@ async function loginUser(req, res) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
     // Respond with token
-    res.json({ token, user});
+    res.json({ token, user });
   } catch (error) {
     console.error("Login error:", error);
 
     res.status(500).json({ error: "Error logging in user" });
   }
 }
-async function getAllUsers(req, res) {
-  const users = await prisma.user.findMany();
+async function getAllUStudent(req, res) {
+  const users = await prisma.student.findMany({
+    select: {
+      user: true,
+      matricule: true,
+    },
+  });
   res.json(users);
 }
-
-// Get User by ID
-async function getUserById(req, res) {
-  const id = parseInt(req.user.id);
-  const user = await prisma.user.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      name: true,
-      posts: true,
-      profile: true,
-      Story: true,
-      email: true,
-    },
-  });
-  res.status(200).send({ msg: "good", user });
-}
-
-// Delete User by ID
-async function deleteUserById(req, res) {
-  const id = parseInt(req.params.id);
-  const user = await prisma.user.delete({
-    where: {
-      id: id,
-    },
-  });
-  res.json({ message: "User deleted successfully" });
-}
-
-// Update User by ID
-async function updateUserById(req, res) {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    return res.status(400).send("Invalid user ID.");
-  }
-
+async function deleteStudent(req, res) {
   try {
-    const user = await prisma.user.update({
+    const user = await prisma.student.findUnique({
       where: {
-        id: id,
-      },
-      data: {
-        email: req.body.email,
-        name: req.body.name,
+        id: parseInt(req.params.id),
       },
     });
-    res.json({ message: "User updated successfully", user });
-  } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(404).send("User not found.");
+    if (!user) {
+      return res.status(404).json({ error: "Student not found" });
     }
-    res.status(500).send("An error occurred while updating the user.");
+
+    await prisma.student.delete({
+      where: {
+        id: parseInt(req.params.id),
+      },
+    });
+    // await prisma.student.update({
+    //   where: {
+    //     id: parseInt(req.params.id),
+    //   },
+    //   data:{
+    //     matricule
+    //   }
+    // });
+    await prisma.user.delete({
+      where: {
+        id: user.userId,
+      },
+    });
+    // await prisma.user.findUnique({
+    //   where: {
+    //    id: parseInt(req.params.id),
+    //   },
+    // });
+
+    return res.status(200).json({ message: "Student deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
 module.exports = {
-  createUser,
-  getAllUsers,
-  getUserById,
-  deleteUserById,
-  updateUserById,
-  loginUser,
+  createStudent,
+  loginStudent,
+  getAllUStudent,
+  deleteStudent,
 };

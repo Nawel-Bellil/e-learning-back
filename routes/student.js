@@ -4,7 +4,7 @@ const express = require("express");
 //router instance
 const router = express.Router();
 // Import the user controller module
-const userController = require("../contollers/userController");
+const userController = require("../contollers/student");
 // Import the protect middleware for authentication
 const { protect } = require("../middleware/authMiddleware");
 
@@ -15,36 +15,23 @@ const { protect } = require("../middleware/authMiddleware");
  * @desc register new user
  */
 // Create User
-router.post("/register", userController.createUser);
+router.post("/register", userController.createStudent);
 /**
  * @route POST /api/login
  * @desc Login an existing user
  */
-router.post("/login", userController.loginUser);
+router.post("/login", userController.loginStudent);
 
-/**
+/**students
  * @route GET /api/users
  * @desc Get all users (protected by JWT middleware)
  */
-router.get("/users",protect, userController.getAllUsers);
+router.get("/students", userController.getAllUStudent);
+router.get("/students/:id", userController.getAllUStudent);
+router.delete("//:id", userController.deleteStudent);
 
 /**
  * @route GET /api/user
  * @desc Get a user by ID (protected by JWT middleware)
  */
-router.get("/user", protect, userController.getUserById);
-
-/**
- * @route DELETE /api/users/:id
- * @desc Delete a user by ID
- */
-router.delete("/users/:id", userController.deleteUserById);
-
-/**
- * @route PUT /api/users/:id
- * @desc Update a user by ID
- */
-router.put("/users/:id", userController.updateUserById);
-
-// Export the router for use in other parts of the application
 module.exports = router;

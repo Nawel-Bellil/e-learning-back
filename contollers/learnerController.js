@@ -82,11 +82,48 @@ async function getStudentById(req, res) {
   }
 }
 
-// Add more functions as needed
+// Function to delete a student by ID
+async function deleteStudentById(req, res) {
+  const id = parseInt(req.params.id);
+
+  try {
+    await prisma.student.delete({
+      where: { id },
+    });
+
+    res.json({ message: "Student deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+// Function to update a student by ID
+async function updateStudentById(req, res) {
+  const id = parseInt(req.params.id);
+  const { email, name, matricule } = req.body;
+
+  try {
+    const updatedStudent = await prisma.student.update({
+      where: { id },
+      data: {
+        user: { update: { email, name } },
+        matricule,
+      },
+      include: { user: true },
+    });
+
+    res.json(updatedStudent);
+  } catch (error) {
+    console.error("Error updating student:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 module.exports = {
   createStudent,
   getAllStudents,
   getStudentById,
-  // Add other functions here
+  deleteStudentById,
+  updateStudentById,
 };
