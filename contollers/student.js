@@ -24,6 +24,7 @@ async function createStudent(req, res) {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user
+    // create() method provided by Prisma's user model
     const user = await prisma.user.create({
       data: {
         email,
@@ -87,6 +88,23 @@ async function getAllUStudent(req, res) {
   });
   res.json(users);
 }
+async function getStudentById(req, res) {
+  const matricule = req.params.matricule;
+  try {
+    const student = await prisma.student.findUnique({
+      where: {
+        matricule: parseInt(matricule),
+      },
+    });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    return res.status(200).json({ student });
+  } catch (e) {
+    console.error("Error fetching student:", e);
+    return res.status(500).json({ error: "Server Error" });
+  }
+}
 async function deleteStudent(req, res) {
   try {
     const user = await prisma.student.findUnique({
@@ -103,28 +121,62 @@ async function deleteStudent(req, res) {
         id: parseInt(req.params.id),
       },
     });
-    // await prisma.student.update({
-    //   where: {
-    //     id: parseInt(req.params.id),
-    //   },
-    //   data:{
-    //     matricule
-    //   }
-    // });
+    await prisma.student.update({
+      where: {
+        id: parseInt(req.params.id),
+      },
+      data: {
+        matricule,
+      },
+    });
     await prisma.user.delete({
       where: {
         id: user.userId,
       },
     });
-    // await prisma.user.findUnique({
-    //   where: {
-    //    id: parseInt(req.params.id),
-    //   },
-    // });
-
     return res.status(200).json({ message: "Student deleted successfully" });
   } catch (error) {
     console.error("Error deleting student:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function updateStudent(req, res) {
+  try {
+    const { id } = req.params; // Student ID
+    const { password } = req.body; // Updated password
+
+    // Find the student by ID
+    const student = await prisma.student.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    // Check if the student exists
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    // Update password if provided
+    if (!password) {
+      return res.status(400).json({ error: "New password is required" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await prisma.student.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Student password updated successfully" });
+  } catch (error) {
+    console.error("Error updating student password:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
@@ -134,4 +186,6 @@ module.exports = {
   loginStudent,
   getAllUStudent,
   deleteStudent,
+  updateStudent,
+  getStudentById,
 };

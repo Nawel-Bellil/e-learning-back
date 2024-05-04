@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 // Get All Users
 async function createUser(req, res) {
-  const { email, password, name } = req.body;
+  const { email, password, first_name, last_name } = req.body;
 
   try {
     // Check if user already exists
@@ -28,7 +28,8 @@ async function createUser(req, res) {
       data: {
         email,
         password: hashedPassword,
-        name,
+        first_name,
+        last_name,
       },
     });
 
@@ -64,7 +65,7 @@ async function loginUser(req, res) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
     // Respond with token
-    res.json({ token, user});
+    res.json({ token, user });
   } catch (error) {
     console.error("Login error:", error);
 
@@ -85,7 +86,8 @@ async function getUserById(req, res) {
     },
     select: {
       id: true,
-      name: true,
+      first_name: true,
+      last_name: true,
       posts: true,
       profile: true,
       Story: true,
@@ -120,7 +122,8 @@ async function updateUserById(req, res) {
       },
       data: {
         email: req.body.email,
-        name: req.body.name,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
       },
     });
     res.json({ message: "User updated successfully", user });
