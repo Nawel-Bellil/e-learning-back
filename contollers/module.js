@@ -9,6 +9,7 @@ async function createModule(req, res) {
     const module = await prisma.module.create({
       data: {
         name,
+        teacherId,
       },
     });
 
@@ -20,7 +21,7 @@ async function createModule(req, res) {
 }
 
 // Get All Modules
-async function getAllModules(req, res) {
+async function getAlldrinks(req, res) {
   try {
     const modules = await prisma.module.findMany({
       include: {
