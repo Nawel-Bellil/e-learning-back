@@ -1,15 +1,26 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Create chapter
+// Create chapter associated with a module
 async function createChapter(req, res) {
-  const { name, teacherId } = req.body;
+  const { chapter_name, moduleId } = req.body;
 
   try {
+    // Check if the module exists
+    const existingModule = await prisma.module.findUnique({
+      where: {
+        id: moduleId,
+      },
+    });
+
+    if (!existingModule) {
+      return res.status(404).json({ error: "Module not found" });
+    }
+
     const chapter = await prisma.chapter.create({
       data: {
-        name,
-        teacherId,
+        chapter_name,
+        moduleId,
       },
     });
 
@@ -21,14 +32,32 @@ async function createChapter(req, res) {
 }
 
 // Get All Chapters
+// Get all chapters for a specific module
 async function getAllChapters(req, res) {
+  const moduleId = parseInt(req.params.moduleId);
+
   try {
+    // Check if the module exists
+    const existingModule = await prisma.module.findUnique({
+      where: {
+        id: moduleId,
+      },
+    });
+
+    if (!existingModule) {
+      return res.status(404).json({ error: "Module not found" });
+    }
+
     const chapters = await prisma.chapter.findMany({
+      where: {
+        moduleId,
+      },
       include: {
         quizzes: true, // Include chapters details
       },
     });
-    res.json(chapters);
+
+    res.status(200).json({ chapters });
   } catch (error) {
     console.error("Error fetching chapters:", error);
     res.status(500).json({ error: "Server error" });

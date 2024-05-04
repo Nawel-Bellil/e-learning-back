@@ -3,13 +3,12 @@ const prisma = new PrismaClient();
 
 // Create Module
 async function createModule(req, res) {
-  const { name, teacherId } = req.body;
+  const { name } = req.body;
 
   try {
     const module = await prisma.module.create({
       data: {
         name,
-        teacherId,
       },
     });
 
