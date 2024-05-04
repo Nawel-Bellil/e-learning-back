@@ -57,12 +57,21 @@ model Chapter {
   chapter_name  String   // Name of the chapter
   module        Module   @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
   moduleId      Int      //Foreign key linking to the Module model
+  topics         topic[]
   quizzes       Quizz[] 
+}
+//les sous-titres d'un chapitre such as : kernal of linar transfomation 
+model topic{
+  id            Int               @id @default(autoincrement())
+  title         String
+  chapter     Chapter  @relation(fields: [chapterId], references: [chapter_id])
+  chapterId     Int  
+
 }
 model Quizz{
   quizz_id      Int @id @default(autoincrement())
   chapter       Chapter   @relation(fields: [chapterId], references: [chapter_id]) // Reference to the associated Chapter
-  chapterId  Int  
+  chapterId     Int
   questions     Question[]
 }
 
