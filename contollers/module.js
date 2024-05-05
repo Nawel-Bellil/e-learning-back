@@ -20,7 +20,7 @@ async function createModule(req, res) {
 }
 
 // Get All Modules
-async function getAlldrinks(req, res) {
+async function getAllModules(req, res) {
   try {
     const modules = await prisma.module.findMany({
       include: {

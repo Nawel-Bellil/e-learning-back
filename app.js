@@ -17,12 +17,20 @@ app.use(
 );
 
 //define routes
-const userRoutes = require("./routes/userRoute");
-const studentRoutes = require("./routes/student");
-app.use("/api", userRoutes);
-app.use("/api/student", studentRoutes);
-// Mount routes
+const user = require("./routes/user");
+const student = require("./routes/student");
+const topic = require("./routes/topic");
+const quizz = require("./routes/quizz");
+const chapter = require("./routes/chapter");
+const moduleRoutes = require("./routes/module");
 
+// Use routes
+app.use("/api", user);
+app.use("/api/student", student);
+app.use("/topics", topic);
+app.use("/quizzes", quizz);
+app.use("/chapters", chapter);
+app.use("/modules", moduleRoutes);
 //starting the server
 const PORT = process.env.PORT || 3000; // Use the PORT environment variable if set, otherwise default to 3000
 app.listen(PORT, () => {

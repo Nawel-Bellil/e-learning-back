@@ -4,7 +4,7 @@ const express = require("express");
 //router instance
 const router = express.Router();
 // Import the user controller module
-const userController = require("../contollers/userController");
+const user = require("../contollers/user");
 // Import the protect middleware for authentication
 const { protect } = require("../middleware/authMiddleware");
 
