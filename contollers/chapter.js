@@ -53,7 +53,9 @@ async function getAllChapters(req, res) {
         moduleId,
       },
       include: {
-        quizzes: true, // Include chapters details
+        // Include chapters details
+        topics: true,
+        quizzes: true,
       },
     });
 
@@ -74,6 +76,7 @@ async function getChapterById(req, res) {
         id: chapterId,
       },
       include: {
+        topics: true,
         quizzes: true, // Include chapters details
       },
     });
