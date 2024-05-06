@@ -7,7 +7,6 @@ const app = express();
 //config middleware
 require("dotenv").config();
 app.use(express.json());
-
 // Enable CORS for all routes
 app.use(
   cors({
@@ -27,10 +26,10 @@ const moduleRoutes = require("./routes/module");
 // Use routes
 app.use("/api", user);
 app.use("/api/student", student);
-app.use("/topics", topic);
-app.use("/quizzes", quizz);
-app.use("/chapters", chapter);
-app.use("/modules", moduleRoutes);
+app.use("/api", topic);
+app.use("/api", quizz);
+app.use("/api", chapter);
+app.use("/api", moduleRoutes);
 //starting the server
 const PORT = process.env.PORT || 3000; // Use the PORT environment variable if set, otherwise default to 3000
 app.listen(PORT, () => {

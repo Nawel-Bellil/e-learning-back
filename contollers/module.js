@@ -6,6 +6,11 @@ async function createModule(req, res) {
   const { name } = req.body;
 
   try {
+    if (!req.body || !req.body.name) {
+      return res
+        .status(400)
+        .json({ error: "Name is required in the request body" });
+    }
     const module = await prisma.module.create({
       data: {
         name,
