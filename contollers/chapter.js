@@ -3,7 +3,8 @@ const prisma = new PrismaClient();
 
 // Create chapter associated with a module
 async function createChapter(req, res) {
-  const { chapter_name, moduleId } = req.body;
+  const { chapter_name } = req.body; // Extract chapter_name from request body
+  const moduleId = parseInt(req.params.moduleId);
 
   try {
     // Check if the module exists
@@ -31,7 +32,6 @@ async function createChapter(req, res) {
   }
 }
 
-// Get All Chapters
 // Get all chapters for a specific module
 async function getAllChapters(req, res) {
   const moduleId = parseInt(req.params.moduleId);
@@ -68,12 +68,12 @@ async function getAllChapters(req, res) {
 
 // Get Chapter by ID
 async function getChapterById(req, res) {
-  const chapterId = parseInt(req.params.id);
+  const chapter_id = parseInt(req.params.id);
 
   try {
     const chapter = await prisma.chapter.findUnique({
       where: {
-        id: chapterId,
+        chapter_id,
       },
       include: {
         topics: true,
@@ -94,12 +94,12 @@ async function getChapterById(req, res) {
 
 // Delete Chapter by ID
 async function deleteChapter(req, res) {
-  const chapterId = parseInt(req.params.id);
+  const chapter_id = parseInt(req.params.id);
 
   try {
     const chapter = await prisma.chapter.findUnique({
       where: {
-        id: chapterId,
+        chapter_id,
       },
     });
 
@@ -109,7 +109,7 @@ async function deleteChapter(req, res) {
 
     await prisma.chapter.delete({
       where: {
-        id: chapterId,
+        chapter_id,
       },
     });
 

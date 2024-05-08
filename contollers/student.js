@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // Import getAllChapters function from chapters controller
-const { getAllChapters } = require('./chapters');
+const { getAllChapters } = require("./chapter");
 
 async function createStudent(req, res) {
   const { email, password, name, matricule } = req.body;
@@ -42,8 +42,8 @@ async function createStudent(req, res) {
       },
     });
 
-     // Retrieve all chapters
-     const chapters = await getAllChapters();
+    // Retrieve all chapters
+    const chapters = await getAllChapters();
 
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
