@@ -48,9 +48,6 @@ async function getModuleById(req, res) {
       where: {
         id: moduleId,
       },
-      include: {
-        chapters: true, // Include chapters details
-      },
     });
 
     if (!module) {

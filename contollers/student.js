@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 
 // Import getAllChapters function from chapters controller
 const { getAllChapters } = require("./chapter");
+const { getAllQuizzes } = require("./quizz");
 
 async function createStudent(req, res) {
   const { email, password, name, matricule } = req.body;
@@ -44,6 +45,7 @@ async function createStudent(req, res) {
 
     // Retrieve all chapters
     const chapters = await getAllChapters();
+    const quizzes = await getAllQuizzes();
 
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
