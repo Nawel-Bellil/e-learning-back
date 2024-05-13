@@ -22,6 +22,7 @@ const topic = require("./routes/topic");
 const quizz = require("./routes/quizz");
 const chapter = require("./routes/chapter");
 const moduleRoutes = require("./routes/module");
+const questions = require("./routes/questions"); // Import question routes
 
 // Use routes
 app.use("/api", user);
@@ -30,6 +31,8 @@ app.use("/api", topic);
 app.use("/api", quizz);
 app.use("/api", chapter);
 app.use("/api", moduleRoutes);
+app.use("/api/question", questions); // Use question routes
+
 //starting the server
 const PORT = process.env.PORT || 3000; // Use the PORT environment variable if set, otherwise default to 3000
 app.listen(PORT, () => {
