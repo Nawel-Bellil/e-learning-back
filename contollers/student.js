@@ -10,7 +10,9 @@ const { getAllChapters } = require("./chapter");
 const { getAllQuizzes } = require("./quizz");
 
 async function createStudent(req, res) {
-  const { email, password, name, matricule } = req.body;
+  const { email, password, first_name, last_name, matricule_student } =
+    req.body;
+  const matricule = parseInt(matricule_student);
 
   try {
     // Check if user already exists
@@ -30,9 +32,10 @@ async function createStudent(req, res) {
     // create() method provided by Prisma's user model
     const user = await prisma.user.create({
       data: {
+        first_name,
+        last_name,
         email,
         password: hashedPassword,
-        name,
       },
     });
 
@@ -44,8 +47,8 @@ async function createStudent(req, res) {
     });
 
     // Retrieve all chapters
-    const chapters = await getAllChapters();
-    const quizzes = await getAllQuizzes();
+    // const chapters = await getAllChapters();
+    //const quizzes = await getAllQuizzes();
 
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
@@ -80,6 +83,10 @@ async function loginStudent(req, res) {
 
     // Respond with token
     res.json({ token, user });
+
+    // Retrieve all chapters
+    const chapters = await getAllChapters();
+    const quizzes = await getAllQuizzes();
   } catch (error) {
     console.error("Login error:", error);
 
