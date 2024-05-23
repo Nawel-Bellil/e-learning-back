@@ -30,6 +30,7 @@ async function createUser(req, res) {
         password: hashedPassword,
         first_name,
         last_name,
+        
       },
     });
 

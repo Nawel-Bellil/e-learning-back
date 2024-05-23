@@ -28,9 +28,9 @@ async function createModule(req, res) {
 async function getAllModules(req, res) {
   try {
     const modules = await prisma.module.findMany({
-      include: {
-        chapters: true, // Include chapters details
-      },
+      // include: {
+      //   chapters: true, // Include chapters details
+      // },
     });
     res.json(modules);
   } catch (error) {

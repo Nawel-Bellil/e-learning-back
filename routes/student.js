@@ -26,13 +26,14 @@ router.post("/login", student.loginStudent);
  * @route GET /api/student/students
  * @desc Get all students (protected by JWT middleware)
  */
-router.get("/students", protect, student.getAllUStudent);
+router.get("/", student.getAllUStudent);
 
 /**
  * @route GET /api/student/:id
  * @desc Get a student by ID (protected by JWT middleware)
  */
-router.get("/student/:id", protect, student.getStudentById);
+// router.get("/:id", protect, student.getStudentById);
+router.get("/info", protect, student.getStudent);
 
 /**
  * @route DELETE /api/students/:id

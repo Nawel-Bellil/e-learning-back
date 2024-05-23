@@ -5,6 +5,7 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 // DataSource configuration for connecting to the PostgreSQL database
 datasource db {
   provider = "postgresql"
@@ -17,105 +18,104 @@ model User {
   email      String   @unique // Unique email address of the user
   first_name String   @default("")
   last_name  String   @default("")
-  password   String   
+  password   String
   student    Student? // Define a one-to-one relation to Student
 }
 
 //Student model
 model Student {
-  id          Int     @id @default(autoincrement())
-  user        User    @relation(fields: [userId], references: [id],onDelete: Cascade)
-  userId      Int     @unique // This field will hold the foreign key to the User table
-  matricule   Int     @unique //Unique identifier for the student
-  userActivity   UserActivity[]  // One-to-many relationship with UserActivity model
+  id           Int            @id @default(autoincrement())
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int            @unique // This field will hold the foreign key to the User table
+  matricule    Int            @unique //Unique identifier for the student
+  userActivity UserActivity[] // One-to-many relationship with UserActivity model
 }
 
 // Teacher model
 //model Teacher {
-  //id           Int       @id @default(autoincrement())
-  //user         User      @relation(fields: [userId], references: [id])
-  //userId       Int       @unique  // Foreign key referencing User.id
-  //module       Module[]  @relation("TeacherToModule")// Many-to-many relationship with Module model
+//id           Int       @id @default(autoincrement())
+//user         User      @relation(fields: [userId], references: [id])
+//userId       Int       @unique  // Foreign key referencing User.id
+//module       Module[]  @relation("TeacherToModule")// Many-to-many relationship with Module model
 //}
 
 // Module model representing modules in the course
 model Module {
-  id           Int       @id @default(autoincrement()) // Unique identifier for the module
-  name          String    @unique // Name of the module
+  id             Int            @id @default(autoincrement()) // Unique identifier for the module
+  name           String         @unique // Name of the module
   // Reference to the associated Teacher
- // teacher      Teacher?   @relation("TeacherToModule",fields: [teacherId], references: [id]) 
+  // teacher      Teacher?   @relation("TeacherToModule",fields: [teacherId], references: [id]) 
   //teacherId    Int  ?     // Foreign key to the Teacher table
-  chapters     Chapter[] // One-to-many relationship with Chapter model
-  userActivities UserActivity[] 
+  chapters       Chapter[] // One-to-many relationship with Chapter model
+  userActivities UserActivity[]
+  description    String?        @db.Text
+  imgLink        String?
 }
 
 // Chapter model representing chapters in the Module
 model Chapter {
-  chapter_id    Int      @id @default(autoincrement()) // Unique identifier for the chapter
-  chapter_name  String   // Name of the chapter
-  module        Module   @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
-  moduleId      Int      //Foreign key linking to the Module model
+  chapter_id     Int            @id @default(autoincrement()) // Unique identifier for the chapter
+  chapter_name   String // Name of the chapter
+  module         Module         @relation(fields: [moduleId], references: [id]) // Reference to the associated Module
+  moduleId       Int //Foreign key linking to the Module model
   topics         topic[]
-  quizzes       Quizz[] 
-  userActivities UserActivity[] 
-}
-//les sous-titres d'un chapitre such as : kernal of linar transfomation 
-model topic{
-  id            Int               @id @default(autoincrement())
-  title         String
-  chapter     Chapter  @relation(fields: [chapterId], references: [chapter_id])
-  chapterId     Int  
-  userActivities UserActivity[] 
+  quizzes        Quizz[]
+  userActivities UserActivity[]
 }
 
-model Quizz{
-  quizz_id      Int @id @default(autoincrement())
-  chapter       Chapter   @relation(fields: [chapterId], references: [chapter_id]) // Reference to the associated Chapter
-  chapterId     Int
-  questions     Question[]
-  userActivities UserActivity[] 
+//les sous-titres d'un chapitre such as : kernal of linar transfomation 
+model topic {
+  id             Int            @id @default(autoincrement())
+  title          String
+  chapter        Chapter        @relation(fields: [chapterId], references: [chapter_id])
+  chapterId      Int
+  userActivities UserActivity[]
+}
+
+model Quizz {
+  quizz_id       Int            @id @default(autoincrement())
+  chapter        Chapter        @relation(fields: [chapterId], references: [chapter_id]) // Reference to the associated Chapter
+  chapterId      Int
+  questions      Question[]
+  userActivities UserActivity[]
 }
 
 model Question {
-  question_id   Int     @id @default(autoincrement()) // Unique identifier for the question
-  type          TypeQuestionEnum // The type of the question (MCQ, True/False)
-  content       String  // The actual content of the question
-  answers       Answer[]
-  quizz         Quizz     @relation(fields: [quizzId], references: [quizz_id]) // Reference to the associated Quizz
-  quizzId       Int       // Foreign key linking to the Quizz model
- 
-
+  question_id Int              @id @default(autoincrement()) // Unique identifier for the question
+  type        TypeQuestionEnum // The type of the question (MCQ, True/False)
+  content     String // The actual content of the question
+  answers     Answer[]
+  quizz       Quizz            @relation(fields: [quizzId], references: [quizz_id]) // Reference to the associated Quizz
+  quizzId     Int // Foreign key linking to the Quizz model
 }
-
 
 enum TypeQuestionEnum {
   MCQ //QCM
-  TF  //true/flase
+  TF //true/flase
 }
 
 model Answer {
-  answer_id Int @id @default(autoincrement()) //Unique identifier for an answer
-  content   String? //Content of the answer
-  isCorrect     Boolean?  // If true, this answer is considered as correct. If false, it's not.
-  question      Question  @relation(fields: [questionId], references: [question_id]) // Reference to the associated Question
-  questionId    Int       // Foreign key linking to the Question model
-
+  answer_id  Int      @id @default(autoincrement()) //Unique identifier for an answer
+  content    String? //Content of the answer
+  isCorrect  Boolean? // If true, this answer is considered as correct. If false, it's not.
+  question   Question @relation(fields: [questionId], references: [question_id]) // Reference to the associated Question
+  questionId Int // Foreign key linking to the Question model
 }
 
 // User activity tracking
 model UserActivity {
   id           Int      @id @default(autoincrement()) // Unique identifier for the activity log
   student      Student  @relation(fields: [studentId], references: [id]) // Reference to the associated Student
-  studentId    Int      // Foreign key linking to the Student model
-  activityType String   // Type of activity (e.g., Module Access, Chapter Access, Topic Viewing, Quiz Attempt, Quiz Completion)
-  module       Module?   @relation(fields: [moduleId], references: [id])
+  studentId    Int // Foreign key linking to the Student model
+  activityType String // Type of activity (e.g., Module Access, Chapter Access, Topic Viewing, Quiz Attempt, Quiz Completion)
+  module       Module?  @relation(fields: [moduleId], references: [id])
   moduleId     Int?
-  chapter      Chapter?  @relation(fields: [chapterId], references: [chapter_id])
+  chapter      Chapter? @relation(fields: [chapterId], references: [chapter_id])
   chapterId    Int?
-  topic        topic?    @relation(fields: [topicId], references: [id])
+  topic        topic?   @relation(fields: [topicId], references: [id])
   topicId      Int?
-  quiz         Quizz?     @relation(fields: [quizId], references: [quizz_id])
+  quiz         Quizz?   @relation(fields: [quizId], references: [quizz_id])
   quizId       Int?
-  score        Int?     // Score achieved (if applicable)
+  score        Int? // Score achieved (if applicable)
   timestamp    DateTime @default(now()) // Timestamp of the activity
 }
