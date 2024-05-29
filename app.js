@@ -1,6 +1,8 @@
 //import express frame to build server
 //import dependencies
 const express = require("express");
+const { Pool } = require("pg"); // Import the Pool object from the 'pg' module
+
 const cors = require("cors");
 //create instance of express app
 const app = express();
@@ -14,7 +16,9 @@ app.use(
     credentials: true,
   })
 );
-
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
 //define routes
 const user = require("./routes/user");
 const student = require("./routes/student");
