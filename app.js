@@ -40,6 +40,6 @@ app.use(cors());
 
 //starting the server
 const PORT = process.env.PORT || 3001; // Use the PORT environment variable if set, otherwise default to 3000
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
