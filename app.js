@@ -38,6 +38,8 @@ app.use("/api", moduleRoutes);
 app.use("/api/question", questions); // Use question routes
 app.use(cors());
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 //starting the server
 const PORT = process.env.PORT || 3001; // Use the PORT environment variable if set, otherwise default to 3000
 app.listen(process.env.PORT, () => {
